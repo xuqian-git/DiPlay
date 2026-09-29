@@ -2,6 +2,7 @@ package com.shilapi.xcertplay
 
 import android.content.Context
 import com.shilapi.xcertplay.airplay.AirPlayIdentity
+import com.shilapi.xcertplay.host.R
 import com.shilapi.xcertplay.mfi.LocalMfiAuthenticationClient
 import com.shilapi.xcertplay.orchestration.MfiTarget
 import java.io.File
@@ -51,7 +52,7 @@ internal object DiPlayBootstrap {
 internal object DiPlayPreferences {
     private fun prefs(context: Context) = context.getSharedPreferences("diplay", Context.MODE_PRIVATE)
     fun phoneAddress(context: Context): String? = prefs(context).getString("phone_address", null)
-    fun phoneName(context: Context): String = prefs(context).getString("phone_name", null) ?: "Your iPhone"
+    fun phoneName(context: Context): String = prefs(context).getString("phone_name", null) ?: context.getString(R.string.default_phone_name)
     fun savePhone(context: Context, address: String, name: String) {
         prefs(context).edit().putString("phone_address", address).putString("phone_name", name).apply()
     }
