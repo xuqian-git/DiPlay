@@ -22,6 +22,9 @@ object AppLocale {
 
     val ALL = listOf(SYSTEM, ENGLISH, SIMPLIFIED_CHINESE, ARABIC, RUSSIAN, SPANISH)
 
+    /** Language used until the driver picks one; choosing "system default" still follows Android. */
+    const val DEFAULT = SIMPLIFIED_CHINESE
+
     private const val PREFS = "diplay"
     private const val KEY_LANGUAGE = "app_language"
 
@@ -33,7 +36,7 @@ object AppLocale {
             return if (locales.isEmpty) SYSTEM else locales[0].language
         }
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getString(KEY_LANGUAGE, SYSTEM)?.takeIf { it in ALL } ?: SYSTEM
+            .getString(KEY_LANGUAGE, DEFAULT)?.takeIf { it in ALL } ?: DEFAULT
     }
 
     fun save(context: Context, language: String) {
@@ -55,7 +58,8 @@ object AppLocale {
             val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             if (!prefs.getBoolean(KEY_MIGRATED, false)) {
                 val manager = context.getSystemService(LocaleManager::class.java)
-                val previous = locale(prefs.getString(KEY_LANGUAGE, SYSTEM) ?: SYSTEM)
+                // A fresh install has no legacy preference and starts in the default language.
+                val previous = locale(prefs.getString(KEY_LANGUAGE, DEFAULT) ?: DEFAULT)
                 // Never overwrite a language already chosen through Android Settings.
                 if (manager.applicationLocales.isEmpty && previous != null) {
                     manager.applicationLocales = LocaleList(previous)

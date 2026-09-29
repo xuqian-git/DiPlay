@@ -48,6 +48,22 @@ class AppLocaleTest {
         assertEquals("zh-CN", manager.applicationLocales.toLanguageTags())
     }
 
+    @Test fun freshInstallStartsInSimplifiedChinese() {
+        AppLocale.wrap(context)
+        assertEquals(AppLocale.SIMPLIFIED_CHINESE, AppLocale.preference(context))
+        AppLocale.save(context, AppLocale.SYSTEM)
+        AppLocale.wrap(context)
+        assertEquals(AppLocale.SYSTEM, AppLocale.preference(context))
+    }
+
+    @Test @Config(sdk = [28])
+    fun olderAndroidFreshInstallStartsInSimplifiedChinese() {
+        assertEquals(AppLocale.SIMPLIFIED_CHINESE, AppLocale.preference(context))
+        assertEquals(Locale.SIMPLIFIED_CHINESE, AppLocale.wrap(context).resources.configuration.locales[0])
+        AppLocale.save(context, AppLocale.SYSTEM)
+        assertEquals(AppLocale.SYSTEM, AppLocale.preference(context))
+    }
+
     @Test @Config(sdk = [28, 32])
     fun olderAndroidWrapsArabicAndReturnsToSystemWithoutChangingGlobalResources() {
         val original = context.resources.configuration.locales.toLanguageTags()
